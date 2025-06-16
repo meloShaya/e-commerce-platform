@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #custom apps
     'shop',  # Custom app for the e-commerce functionality
+    'cart',  # Custom app for the shopping cart functionality
+    'orders',  # Custom app for handling orders
 ]
 
 MIDDLEWARE = [
@@ -62,6 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Custom context processor for the cart
+                'cart.context_processors.cart',  
             ],
         },
     },
@@ -80,6 +86,15 @@ DATABASES = {
     }
 }
 
+# email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# media files configuration
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# session configuration
+CART_SESSION_ID = 'cart'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
