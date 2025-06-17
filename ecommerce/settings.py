@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv(Path(__file__).resolve().parent.parent / '.env')
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,6 +48,7 @@ INSTALLED_APPS = [
     'shop',  # Custom app for the e-commerce functionality
     'cart',  # Custom app for the shopping cart functionality
     'orders',  # Custom app for handling orders
+    'payment' # Custom app for payment processing
 ]
 
 MIDDLEWARE = [
@@ -88,6 +95,13 @@ DATABASES = {
 
 # email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# stripe configuration
+# Stripe settings
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_API_VERSION = os.environ.get('STRIPE_API_VERSION')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 
 # media files configuration
 MEDIA_URL = '/media/'
