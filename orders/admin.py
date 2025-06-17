@@ -35,8 +35,16 @@ def export_orders_to_csv(modeladmin, request, queryset):
         writer.writerow(data_row)
 
     return response
-
 export_orders_to_csv.short_description = "Export selected orders to CSV"
+
+def order_pdf(obj):
+    """
+    Display a link to the PDF invoice for the order.
+    """
+    url = reverse('orders:admin_order_pdf', args=[obj.id])
+    return mark_safe(f'<a href="{url}">PDF</a>')
+order_pdf.short_description = 'Invoice'
+
 def order_payment(obj):
     """
     Display a link to the Stripe payment URL for the order.
@@ -59,7 +67,7 @@ def order_detail(obj):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'email', 'address', 'postal_code', 'city', 'paid', order_payment, 'created', 'updated', order_detail]
+    list_display = ['id', 'first_name', 'last_name', 'email', 'address', 'postal_code', 'city', 'paid', order_payment, 'created', 'updated', order_detail, order_pdf]
     list_filter = ['paid', 'created', 'updated']
     inlines = [OrderItemInline]
     search_fields = ['first_name', 'last_name', 'email']
