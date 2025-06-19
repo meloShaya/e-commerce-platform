@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'shop',  # Custom app for the e-commerce functionality
     'cart',  # Custom app for the shopping cart functionality
     'orders',  # Custom app for handling orders
-    'payment' # Custom app for payment processing
+    'payment', # Custom app for payment processing
+    'coupons',  # Custom app for handling coupons
 ]
 
 MIDDLEWARE = [
@@ -106,6 +107,11 @@ STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 # media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Redis settings
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 1
 
 
 # session configuration

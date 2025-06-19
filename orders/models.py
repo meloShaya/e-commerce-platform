@@ -1,7 +1,9 @@
 from django.db import models
 from shop.models import Product
 from django.conf import settings
-
+from decimal import Decimal
+from django.core.validators import MinValueValidator, MaxValueValidator
+from coupons.models import Coupon
 # Create your models here.
 
 class Order(models.Model):
@@ -18,6 +20,8 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
     stripe_id = models.CharField(max_length=250, blank=True)
+    coupon = models.ForeignKey(Coupon, related_name='orders', null=True, blank=True, on_delete=models.SET_NULL)
+    discount = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     class Meta:
         ordering = ('-created',)
@@ -48,6 +52,27 @@ class Order(models.Model):
             # Stripe path for live payments
             path = '/'
         return f'https://dashboard.stripe.com{path}payments/{self.stripe_id}'
+    
+    def get_total_cost_before_discount(self):
+        """
+        Calculate the total cost of the order before applying any discount.
+        This method sums the cost of all items in the order.
+        """
+        return sum(item.get_cost() for item in self.items.all())
+    
+    def get_discount(self):
+        """
+        Calculate the discount amount based on the total cost before discount.
+        The discount is applied as a percentage of the total cost.
+        """
+        total_cost = self.get_total_cost_before_discount()
+        return (total_cost * self.discount) / Decimal(100) if self.discount else Decimal('0.00')
+
+    def get_total_cost(self):
+        """
+        Calculate the total cost of the order after applying the discount.
+        """
+        return self.get_total_cost_before_discount() - self.get_discount()
 
 class OrderItem(models.Model):
     """
